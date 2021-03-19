@@ -1,106 +1,115 @@
 package lesson2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 public class Main {
     public static void main(String[] args) {
-//        int[] arr = new int[10];
-//
-//        for (int i = 0; i < arr.length; i++) {
-//            arr[i] = i;
-//        }
-//
-//        System.out.println(Arrays.toString(arr));
-//
-//        for (int i = 0; i < arr.length; i++) {
-//            if (arr[i] % 2 != 0) {
-//                arr[i] *=3;
-//            }
-//        }
-
-//        System.out.println(Arrays.toString(arr));
-
-//        for (int i = 0; i < arr.length; i++) {
-//            System.out.print(arr[i]+" ");
-//        }
-
-//        for (String s : strarr) {
-//            System.out.print(s);
-//        }
 
 
-//        String[] strarr = {"asd", "zxc", "qwe"};
-//
-//        System.out.println(Arrays.toString(strarr));
-//
-////        for (int i = 0; i < strarr.length; i++) {
-////            strarr[i] += "0";
-////        }
-//
-//        for (String s : strarr) {
-//            s += "0";
-//        }
-//
-//        System.out.println(Arrays.toString(strarr));
+//        + 1. Создать массив большого размера (100000 элементов).
+//        + 2. В коде доделать проверки в местах с комментариями
+//        + 3. Заполнить массив случайными числами.
+//        + 4. Написать методы, реализующие рассмотренные виды сортировок,
+//           и проверить скорость выполнения каждой.(Можете в комментариях написать измеренное время)
+
+        /** Результаты:
+         *
+         * size = 1_000_000
+         *
+         * Несортированные массивы:
+         * Selection sort: 461312
+         * Insertion sort: 104262
+         * Bubble sort: 1640900
+         *
+         * Сортированные массивы:
+         * Selection sort: 144616
+         * Insertion sort: 8
+         * Bubble sort: 127827
+         *
+         * Выыоды:
+         * При сортировке несотрированных массивов самая эффективная сортировка Вставками.
+         * Пузырьковая сортировка показала самый худший результат.
+         *
+         *
+         * При подаче на вход сортированных массивов очень эффективна сортровка Вставками.
+         * Пузырьковая и Выбором показали одинаковую производительность.
+         *
+         * */
+
+        int size = 1_000_000;
+        int[] myArray = getArrayList(size);
+        int[] tmp = new int[myArray.length];
+        System.arraycopy(myArray, 0, tmp, 0, myArray.length);
+
+        long start = System.currentTimeMillis();
+        selectionSort(tmp);
+        System.out.println("Selection sort: " + (System.currentTimeMillis() - start));
 
 
-//        List<Integer> list = new ArrayList<>(Arrays.asList(2, 2, 2, 3, 56, 2, 4, 3, 2));
+        System.arraycopy(myArray, 0, tmp, 0, myArray.length);
+        start = System.currentTimeMillis();
+        insertionSort(tmp);
+        System.out.println("Insertion sort: " + (System.currentTimeMillis() - start));
 
-//        System.out.println(list);
-////        list.removeIf(i -> i == 2);
-////        list.removeAll(Arrays.asList(2));
-////        list.replaceAll(i -> i*i);
-////        list.remove((Integer) 2);
-//
-//        System.out.println(list);
+        System.arraycopy(myArray, 0, tmp, 0, myArray.length);
+        start = System.currentTimeMillis();
+        bubbleSort(tmp);
+        System.out.println("Bubble sort: " + (System.currentTimeMillis() - start));
+    }
 
-
-
-//        MyArrayList<Integer> mal = new MyArrayList<>();
-//        mal.add(5);
-//        mal.add(8);
-//        mal.add(2);
-//        System.out.println(mal);
-//
-//        mal.add(1, 99);
-//        System.out.println(mal);
-//
-////        System.out.println(mal.remove(2));
-//        System.out.println(mal.remove((Integer) 99));
-//        System.out.println(mal);
-
-
-//        MySortedArrayList<Integer> msal = new MySortedArrayList<>();
-//        msal.add(5);
-//        msal.add(1);
-//        msal.add(8);
-//        msal.add(2);
-//        msal.add(3);
-//        System.out.println(msal);
-//        msal.add(4);
-//        System.out.println(msal);
-//        System.out.println(msal.binaryIndexOf(1));
-
-
+    public static int[] getArrayList(int size) {
+        int[] tmp = new int[size];
         Random r = new Random();
-        MyArrayList<Integer> mal = new MyArrayList<>(10);
-        for (int i = 0; i < 10; i++) {
-            mal.add(r.nextInt(100));
+        for (int i = 0; i < tmp.length; i++) {
+            tmp[i] = (r.nextInt(1000));
+//            tmp[i] = i;
         }
-        System.out.println(mal);
+        return tmp;
+    }
 
+    public static void selectionSort(int[] arr) {
+        int iMin;
+        for (int i = 0; i < arr.length - 1; i++) {
+            iMin = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (less(arr[j], arr[iMin])) {
+                    iMin = j;
+                }
+            }
+            swap(arr, i, iMin);
+        }
+    }
 
-//        mal.selectionSort();
-//        mal.insertionSort();
-        mal.bubbleSort();
+    public static void insertionSort(int[] arr) {
+        int key;
+        for (int i = 1; i < arr.length; i++) {
+            int j = i;
+            key = arr[i];
+            while (j > 0 && less(key, arr[j - 1])) {
+                arr[j] = arr[j - 1];
+                j--;
+            }
+            arr[j] = key;
+        }
+    }
 
+    public static void bubbleSort(int[] arr) {
+        for (int i = arr.length - 1; i > 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (less(arr[j + 1], arr[j])) {
+                    swap(arr, j + 1, j);
+                }
+            }
+        }
+    }
 
-        System.out.println(mal);
+    private static boolean less(int index1, int index2) {
+        return index1 < index2;
+    }
 
+    private static void swap(int[] arr, int index1, int index2) {
+        int temp = arr[index1];
+        arr[index1] = arr[index2];
+        arr[index2] = temp;
     }
 }
