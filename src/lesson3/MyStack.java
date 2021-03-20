@@ -22,9 +22,12 @@ public class MyStack<T> {
     }
 
     public void push(T item) {
+        System.out.println(capacity);
         if (isFull()) {
-            //реализовать расширение массива
-            throw new StackOverflowError("Стек заполнен");
+            capacity *= 2;
+            T[] tmp = (T[]) new Object[capacity];
+            System.arraycopy(list, 0, tmp, 0, list.length);
+            list = tmp;
         }
         list[size]= item;
         size++;
@@ -33,7 +36,7 @@ public class MyStack<T> {
     public T pop(){
         T temp = peek();
         size--;
-        list[size]= null;
+        list[size] = null;
         return temp;
     }
 
