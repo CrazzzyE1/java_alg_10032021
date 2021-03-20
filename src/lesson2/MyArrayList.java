@@ -1,11 +1,5 @@
 package lesson2;
 
-//        1. Создать массив большого размера (100000 элементов).
-//        2. В коде доделать проверки в местах с комментариями
-//        3. Заполнить массив случайными числами.
-//        4. Написать методы, реализующие рассмотренные виды сортировок,
-//           и проверить скорость выполнения каждой.(Можете в комментариях написать измеренное время)
-
 public class MyArrayList<T extends Comparable<T>> {
     private T[] list;
     private int size;
@@ -25,15 +19,31 @@ public class MyArrayList<T extends Comparable<T>> {
         list = (T[]) new Comparable[capacity];
     }
 
+
     public void add(T item) {
-        // доделать проверку на превышение лоад фактора 0.75
+        checkLoadFactor(size);
         list[size] = item;
         size++;
     }
 
-    public void add(int index, T item) {
-        // доделать проверку на превышение лоад фактора 0.75
-        // доделать проверку на допустимость индекса
+    public boolean checkIndex(int index) {
+        if (index >= size) return false;
+        return true;
+    }
+
+    public void checkLoadFactor(int size) {
+        if (size > (capacity * 0.7)) {
+            capacity *= 2;
+            T[] tmp = (T[]) new Comparable[capacity];
+            System.arraycopy(list, 0, tmp, 0, list.length);
+            list = tmp;
+        }
+        System.out.println(capacity);
+    }
+
+    public void add(int index, T item) throws ArrayIndexOutOfBoundsException {
+        checkLoadFactor(size);
+        if (!checkIndex(index)) throw new ArrayIndexOutOfBoundsException();
         for (int i = size; i > index; i--) {
             list[i] = list[i - 1];
         }
@@ -41,8 +51,8 @@ public class MyArrayList<T extends Comparable<T>> {
         size++;
     }
 
-    public final T remove(int index) {
-        // доделать проверку на допустимость индекса
+    public final T remove(int index) throws ArrayIndexOutOfBoundsException {
+        if (!checkIndex(index)) throw new ArrayIndexOutOfBoundsException();
         T temp = list[index];
         for (int i = index; i < size; i++) {
             list[i] = list[i + 1];
@@ -70,14 +80,13 @@ public class MyArrayList<T extends Comparable<T>> {
         return -1;
     }
 
-    public T get(int index) {
-        // доделать проверку на допустимость индекса
+    public T get(int index) throws ArrayIndexOutOfBoundsException {
+        if (!checkIndex(index)) throw new ArrayIndexOutOfBoundsException();
         return list[index];
     }
 
-    public void set(int index, T item) {
-        // доделать проверку на допустимость индекса
-
+    public void set(int index, T item) throws ArrayIndexOutOfBoundsException {
+        if (!checkIndex(index)) throw new ArrayIndexOutOfBoundsException();
         list[index] = item;
     }
 
@@ -156,7 +165,7 @@ public class MyArrayList<T extends Comparable<T>> {
                     isSwap = true;
                 }
             }
-            if( !isSwap){
+            if (!isSwap) {
                 break;
             }
         }
