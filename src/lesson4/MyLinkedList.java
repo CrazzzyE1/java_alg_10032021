@@ -22,6 +22,7 @@ public class MyLinkedList<T> implements Iterable<T> {
     private class Iter implements Iterator<T> {
         Node current = new Node(null, first);
 
+
         @Override
         public boolean hasNext() {
             return current.getNext() != null;
@@ -36,37 +37,68 @@ public class MyLinkedList<T> implements Iterable<T> {
 
     private class ListIter extends Iter implements ListIterator<T> {
         int index = 0;
+        boolean nextOrPrev = false; // false - next, true - prev
+        Node current2 = new Node(last, null, null);
 
         @Override
         public boolean hasPrevious() {
-            return current.getPrev() != null;
+            if (!nextOrPrev) index = 0;
+            nextOrPrev = true;
+            return current2.getPrev() != null;
         }
 
         @Override
         public T previous() {
-            return null;
+
+            current2 = current2.getPrev();
+            index--;
+            return current2.getValue();
+        }
+
+
+        @Override
+        public boolean hasNext() {
+            if (nextOrPrev) index = 0;
+            nextOrPrev = false;
+            return current.getNext() != null;
+        }
+
+        @Override
+        public T next() {
+            current = current.getNext();
+            index++;
+            return current.getValue();
         }
 
         @Override
         public int nextIndex() {
-            return 0;
+            int tmp = index;
+            if (nextOrPrev) {
+                tmp = size - Math.abs(index) + 1;
+            }
+            return tmp;
         }
 
         @Override
         public int previousIndex() {
-            return 0;
+            int tmp = index - 2;
+            if (nextOrPrev) {
+                tmp = size - Math.abs(index) - 1;
+            }
+            return tmp;
         }
 
         //удаляет элемент который прошли методом next или prev
         @Override
         public void remove() {
-
         }
+
         //удаляет элементу который прошли методом next или prev
         @Override
         public void set(T t) {
 
         }
+
         //добавить эелемент после элемента который прошли методом next или prev
         // в направлении куда шли.
         @Override
