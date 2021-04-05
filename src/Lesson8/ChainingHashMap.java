@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class ChainingHashMap<Key, Value> {
     private int capacity;
     private int size;
-
+    private int loadFactor = 3;
     private LinkedList<Node>[] st;
 
     public ChainingHashMap(int capacity) {
@@ -27,6 +27,39 @@ public class ChainingHashMap<Key, Value> {
             this.key = key;
             this.value = value;
         }
+    }
+
+    public void reCapacity() {
+        LinkedList<Node>[] tmp = st;
+        capacity *= 2;
+        st = new LinkedList[capacity];
+        size = 0;
+        for (int i = 0; i < st.length; i++) {
+            st[i] = new LinkedList<>();
+        }
+        Node tmpNode;
+        for (int i = 0; i < tmp.length; i++) {
+            for (int j = 0; j < tmp[i].size(); j++) {
+                tmpNode = tmp[i].get(j);
+                put(tmpNode.key, tmpNode.value);
+            }
+        }
+    }
+
+    public void checkCapacity(int i) {
+        if (st[i].size() >= loadFactor) {
+            reCapacity();
+        }
+    }
+
+    public Value remove(Key key) {
+        checkKeyNotNull(key);
+        int i = hash(key);
+        Value tmp = get(key);
+        if(st[i].removeIf(h -> h.key == key)){
+            size--;
+        }
+        return tmp;
     }
 
     public int size() {
@@ -62,6 +95,7 @@ public class ChainingHashMap<Key, Value> {
         }
         st[i].addLast(new Node(key, value));
         size++;
+        checkCapacity(i);
     }
 
     public Value get(Key key) {
